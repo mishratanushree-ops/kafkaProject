@@ -14,6 +14,9 @@ public class OrderService {
     @Autowired
     private KafkaTemplate<String, OrderCreatedEvent> kafkaTemplate;
 
+    @Autowired
+    private OrderRepository orderRepository;
+
     Map<String, Order> orderDB = new HashMap<>();
 
     // Step 1 - Create Order
@@ -22,6 +25,9 @@ public class OrderService {
         orderDB.put(order.getOrderId(), order);
         kafkaTemplate.send("order-created-topic",  new OrderCreatedEvent(order.getOrderId()));
         System.out.println( "Order Created: " + order.getOrderId() );
+        Order saved = orderRepository.save(order);
+        System.out.println("Saved Order: " + saved.getOrderId());
+        System.out.println("Total Orders: " + orderRepository.count());
     }
 
     // Step 2 - Payment Success
@@ -34,6 +40,10 @@ public class OrderService {
         if (order != null) {
             order.setStatus("CONFIRMED");
             System.out.println( "Order Confirmed: " + order.getOrderId() );
+            Order saved = orderRepository.save(order);
+            System.out.println("Saved Order: " + saved.getOrderId());
+            System.out.println("Total Orders: " + orderRepository.count());
+            orderDB.remove(event.getOrderId()) ;
         }
     }
 
@@ -47,6 +57,11 @@ public class OrderService {
         if (order != null) {
             order.setStatus("CANCELLED");
             System.out.println( "Order Cancelled: " + order.getOrderId() );
+
+            Order saved = orderRepository.save(order);
+            System.out.println("Saved Order: " + saved.getOrderId());
+            System.out.println("Total Orders: " + orderRepository.count());
+            orderDB.remove(event.getOrderId()) ;
         }
     }
 
