@@ -35,16 +35,16 @@ jobs:
 
       - name: Build Image
         run: |
-          docker build -t asia-south1-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/Kafkaproject-repo/Kafkaproject:${{ github.sha }} .
+          docker build -t asia-south1-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/kafkaproject-repo/kafkaproject:${{ github.sha }} .
 
       - name: Push Image
         run: |
-          docker push asia-south1-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/Kafkaproject-repo/Kafkaproject:${{ github.sha }}
+          docker push asia-south1-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/kafkaproject-repo/kafkaproject:${{ github.sha }}
 
       - name: Deploy Cloud Run
         run: |
-          gcloud run deploy Kafkaproject \
-            --image asia-south1-docker.pkg.dev/gen-lang-client-0167173788/Kafkaproject-repo/Kafkaproject:${{ github.sha }} \
+          gcloud run deploy kafkaproject \
+            --image asia-south1-docker.pkg.dev/gen-lang-client-0167173788/kafkaproject-repo/kafkaproject:${{ github.sha }} \
             --platform managed \
             --region asia-south1 \
             --allow-unauthenticated
